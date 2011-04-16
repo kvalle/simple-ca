@@ -60,6 +60,7 @@ class SimpleCA:
     def wolfram_rule_code(code=184):
         """Returns transition function for given wolfram rule"""
         code = str(bin(code))[2:]
+        code = code.rjust(8,'0')
         code = code[::-1]
         def fun(cell, neighbors):
             inp = str(neighbors[0].state)+str(cell.state)+str(neighbors[1].state)
@@ -69,6 +70,6 @@ class SimpleCA:
 if __name__=='__main__':
     #~ states = '110000010001000'
     states = [1,1,0,0,0,0,0,1,0,0,0,1,0,0,0]
-    rule_code = 184
+    rule_code = 110
     ca = SimpleCA(states, rule_code)
     ca.run(10)
