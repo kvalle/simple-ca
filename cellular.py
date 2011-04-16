@@ -14,18 +14,19 @@ class SimpleCA:
         self._cells = [Cell(s) for s in initial_states]
         self.transition_function = self.wolfram_rule_code(rule_code)
 
-    def update(self, transition_rule):
-        # synchronous update of cells
+    def update(self):
+        """Update cell states synchronously"""
         states = []
         for cell in self._cells:
             cell
             neighbors = self.get_neighbors(cell)
-            state = transition_rule(cell, neighbors)
+            state = self.transition_function(cell, neighbors)
             states.append(state)
         for i, cell in enumerate(self._cells):
             cell.update(states[i])
 
     def get_neighbors(self, cell):
+        """Fetch list of neighbor cells"""
         if cell not in self._cells:
             raise Exception('Cell not present!')
         i = self._cells.index(cell)
@@ -35,10 +36,12 @@ class SimpleCA:
         return [prev, next]
 
     def run(self, iterations):
-        print self
-        for itr in range(iterations):
-            self.update(self.transition_function)
-            print self
+        """Iteratively update cell states and print results"""
+        w = len(str(iterations))
+        print '0'.rjust(w), self
+        for itr in range(1,iterations+1):
+            self.update()
+            print str(itr).rjust(w), self
 
     def __str__(self):
         rep = [str(cell) for cell in self._cells]
@@ -46,6 +49,7 @@ class SimpleCA:
 
     @staticmethod
     def wolfram_rule_code(code=184):
+        """Returns transition function for given wolfram rule"""
         code = str(bin(code))[2:]
         code = code[::-1]
         def fun(cell, neighbors):
