@@ -10,8 +10,9 @@ class Cell:
             return ' '
 
 class SimpleCA:
-    def __init__(self, initial_states):
+    def __init__(self, initial_states, rule_code):
         self._cells = [Cell(s) for s in initial_states]
+        self.transition_function = self.wolfram_rule_code(rule_code)
 
     def update(self, transition_rule):
         # synchronous update of cells
@@ -25,27 +26,26 @@ class SimpleCA:
             cell.update(states[i])
 
     def get_neighbors(self, cell):
-        # neighborhood wraps the cellular space!
         if cell not in self._cells:
             raise Exception('Cell not present!')
         i = self._cells.index(cell)
+        # neighborhood wraps the cellular space!
         prev = self._cells[i-1]
         next = self._cells[(i+1)%len(self._cells)]
         return [prev, next]
 
-    def __str__(self):
-        cells = [str(cell) for cell in self._cells]
-        return '|'+''.join(cells)+'|'
-
     def run(self, iterations):
         print self
         for itr in range(iterations):
-            self.update(TransitionRuleFactory.wolfram_code(184))
+            self.update(self.transition_function)
             print self
 
-class TransitionRuleFactory:
+    def __str__(self):
+        rep = [str(cell) for cell in self._cells]
+        return '|'+''.join(rep)+'|'
+
     @staticmethod
-    def wolfram_code(code=184):
+    def wolfram_rule_code(code=184):
         code = str(bin(code))[2:]
         code = code[::-1]
         def fun(cell, neighbors):
@@ -54,6 +54,7 @@ class TransitionRuleFactory:
         return fun
 
 if __name__=='__main__':
-    states = '110000010001000110011100000101010100010010000010001000'
-    ca = SimpleCA(states)
+    states = '110000010001000'
+    rule_code = 184
+    ca = SimpleCA(states, rule_code)
     ca.run(10)
