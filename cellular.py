@@ -4,13 +4,18 @@ class Cell:
     def update(self, state):
         self.state = state
     def __str__(self):
-        if int(self.state) == 1:
-            return 'x'
-        else:
-            return ' '
+        return str(self.state)
 
 class SimpleCA:
     def __init__(self, initial_states, rule_code):
+        """Initialize one-dimensional wolfram-rule CA.
+
+        'initial_states' can equally well be list of integers (0 or 1), or
+        a string (of 0s and 1s).
+
+        'rule_code' must be integer in range [0,255] and is the wolfram
+        rule code.
+        """
         self._cells = [Cell(s) for s in initial_states]
         self.transition_function = self.wolfram_rule_code(rule_code)
 
@@ -44,8 +49,12 @@ class SimpleCA:
             print str(itr).rjust(w), self
 
     def __str__(self):
+        """Print to more clear string representation"""
         rep = [str(cell) for cell in self._cells]
-        return '|'+''.join(rep)+'|'
+        rep = ''.join(rep)
+        rep = rep.replace('1','x')
+        rep = rep.replace('0',' ')
+        return '|'+rep+'|'
 
     @staticmethod
     def wolfram_rule_code(code=184):
@@ -54,11 +63,12 @@ class SimpleCA:
         code = code[::-1]
         def fun(cell, neighbors):
             inp = str(neighbors[0].state)+str(cell.state)+str(neighbors[1].state)
-            return code[int(inp,2)]
+            return int(code[int(inp,2)])
         return fun
 
 if __name__=='__main__':
-    states = '110000010001000'
+    #~ states = '110000010001000'
+    states = [1,1,0,0,0,0,0,1,0,0,0,1,0,0,0]
     rule_code = 184
     ca = SimpleCA(states, rule_code)
     ca.run(10)
