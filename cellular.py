@@ -68,8 +68,8 @@ class SimpleCA:
         return fun
 
 if __name__=='__main__':
-    #~ states = '110000010001000'
-    states = [1,1,0,0,0,0,0,1,0,0,0,1,0,0,0]
+    import random
+    states = [0 if random.random() < 0.5 else 1 for i in range(80)]
     rule_code = 110
     ca = SimpleCA(states, rule_code)
-    ca.run(10)
+    ca.run(50)
